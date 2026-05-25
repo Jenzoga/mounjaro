@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mounjaro® Weight Loss Interactive Infographic</title>
+  <!-- นำเข้า Tailwind CSS เพื่อการตกแต่งสไตล์ที่ทันสมัย -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- กำหนดสไตล์ที่กำหนดเองเล็กน้อยสำหรับการเปลี่ยนผ่านและแถบสไลเดอร์ -->
+  <style>
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #7C3AED;
+      cursor: pointer;
+      transition: background .15s ease-in-out, transform .1s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #6D28D9;
+      transform: scale(1.1);
+    }
+    .custom-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 flex flex-col min-h-screen antialiased">
+
+  <!-- ส่วนหัวแอปพลิเคชัน (Header) คอนเซปต์ Mounjaro (ม่วง-คราม) -->
+  <header class="bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white shadow-md border-b border-purple-700">
+    <div class="max-w-6xl mx-auto px-4 py-6 md:py-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mb-2 animate-pulse">
+            Mounjaro® Clinical Trial (SURMOUNT-1 Study)
+          </span>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            เครื่องจำลองและคำนวณแนวโน้มน้ำหนักตัว Mounjaro® (Tirzepatide)
+          </h1>
+          <p class="text-purple-200 text-xs md:text-sm mt-1 max-w-2xl">
+            ประเมินแนวโน้มการเปลี่ยนรูปโฉมร่างกายสัปดาห์ต่อสัปดาห์ อ้างอิงสถิติเฉลี่ยจากงานวิจัยทางคลินิก 72 สัปดาห์
+          </p>
+        </div>
+        
+        <!-- แถบสลับหน่วยน้ำหนัก -->
+        <div class="flex bg-slate-800/60 p-1.5 rounded-xl border border-slate-700/50 self-stretch md:self-auto gap-1">
+          <button id="unit-kg-btn" class="flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition uppercase bg-purple-600 text-white shadow-sm">
+            กิโลกรัม
+          </button>
+          <button id="unit-lbs-btn" class="flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition uppercase text-slate-300 hover:bg-slate-800/50">
+            ปอนด์
+          </button>
+          <button id="unit-st-btn" class="flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition uppercase text-slate-300 hover:bg-slate-800/50">
+            สโตน
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- พื้นที่หลัก (Layout Main Content) -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+    
+    <!-- แผงควบคุมฝั่งซ้าย (Sidebar - คอลัมน์ 4/12) -->
+    <section class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 flex flex-col justify-between gap-6">
+      <div class="space-y-6">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <!-- ไอคอน Profile SVG -->
+          <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          ข้อมูลและแผนของคุณ
+        </h2>
+
+        <!-- ช่องกรอกน้ำหนักเริ่มต้น -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-sm font-semibold text-slate-700">
+              น้ำหนักเริ่มต้นก่อนใช้ยา (<span class="unit-text">kg</span>)
+            </label>
+            <span id="start-weight-sub" class="text-[11px] text-slate-400 font-medium">~ 14.2 st / 200 lbs</span>
+          </div>
+          <div class="relative">
+            <input 
+              type="number" 
+              step="0.1"
+              id="start-weight-input"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+              value="90"
+            />
+            <span class="absolute right-4 top-3.5 text-slate-400 text-sm font-medium uppercase unit-text">kg</span>
+          </div>
+        </div>
+
+        <!-- ช่องกรอกน้ำหนักในฝัน (น้ำหนักเป้าหมาย) -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-sm font-semibold text-slate-700">
+              เป้าหมายน้ำหนักในฝัน (<span class="unit-text">kg</span>)
+            </label>
+            <span id="target-weight-sub" class="text-[11px] text-slate-400 font-medium">~ 11 st / 154 lbs</span>
+          </div>
+          <div class="relative">
+            <input 
+              type="number" 
+              step="0.1"
+              id="target-weight-input"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+              value="70"
+            />
+            <span class="absolute right-4 top-3.5 text-slate-400 text-sm font-medium uppercase unit-text">kg</span>
+          </div>
+
+          <!-- กล่องสรุปการวิเคราะห์เป้าหมาย (%) -->
+          <div class="mt-2.5 p-3 rounded-xl bg-purple-50 border border-purple-100 text-xs">
+            <div class="flex justify-between items-center text-slate-700">
+              <span class="font-medium">เป้าหมายลดลงทั้งหมด:</span>
+              <span id="target-reduction-percent" class="font-extrabold text-purple-700 text-sm">-22.2%</span>
+            </div>
+            <p id="target-reduction-desc" class="text-[10px] text-slate-500 mt-1 leading-normal">
+              เป้าหมายนี้สอดคล้องและเป็นไปได้สูงตามเกณฑ์มาตรฐานผลลัพธ์ของกลุ่มทดสอบ 15mg
+            </p>
+          </div>
+
+          <button 
+            id="recommend-target-btn"
+            class="mt-3 text-xs text-purple-600 font-semibold hover:text-purple-700 hover:underline flex items-center gap-1"
+          >
+            <span>💡 ใช้เป้าหมายแนะนำสูงสุดตามงานวิจัย (ลดลง 22.5%)</span>
+          </button>
+        </div>
+
+        <!-- แผนการรักษา (Mounjaro Doses) -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-3">
+            เลือกขนาดยา Mounjaro เพื่อจำลอง
+          </label>
+          <div class="grid grid-cols-1 gap-2.5">
+            <!-- ปุ่มแผนยาสูงสุด 15mg -->
+            <button
+              id="plan-mounjaro15-btn"
+              class="w-full text-left p-3.5 rounded-xl border transition bg-purple-950 text-white border-purple-800 shadow-md"
+            >
+              <div class="flex justify-between items-start">
+                <div class="font-bold text-sm">ปริมาณยาสูงสุด Mounjaro® 15mg</div>
+                <span class="text-xs px-2 py-0.5 rounded-md font-bold bg-purple-500 text-white">-22.5%</span>
+              </div>
+              <p class="text-xs mt-1 leading-relaxed text-purple-300">
+                แผนปรับเพิ่มยาจนถึงขนาดสูงสุดสำหรับการสลายเซลล์ไขมันสะสมในระยะยาว 72 สัปดาห์
+              </p>
+            </button>
+
+            <!-- ปุ่มแผนยาพยุง 5mg -->
+            <button
+              id="plan-mounjaro5-btn"
+              class="w-full text-left p-3.5 rounded-xl border transition bg-white text-slate-700 hover:bg-slate-50 border-slate-200"
+            >
+              <div class="flex justify-between items-start">
+                <div class="font-bold text-sm text-purple-950">ขนาดเริ่มต้น Mounjaro® 5mg</div>
+                <span class="text-xs px-2 py-0.5 rounded-md font-bold bg-purple-100 text-purple-800">-15.0%</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                ขนาดพยุงเริ่มต้นทั่วไป ร่างกายปรับตัวได้สบายและลดการสูญเสียมวลกล้ามเนื้อได้ดี
+              </p>
+            </button>
+
+            <!-- ปุ่มกลุ่มควบคุม Placebo -->
+            <button
+              id="plan-placebo-btn"
+              class="w-full text-left p-3.5 rounded-xl border transition bg-white text-slate-700 hover:bg-slate-50 border-slate-200"
+            >
+              <div class="flex justify-between items-start">
+                <div class="font-bold text-sm text-amber-950">กลุ่มไม่ได้ยาจริง (Placebo)</div>
+                <span class="text-xs px-2 py-0.5 rounded-md font-bold bg-amber-100 text-amber-800">-2.4%</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                จำลองกรณีไม่ได้ตัวยาช่วยคุมหิว พึ่งพาวินัยการจัดสารอาหารแคลอรี่ต่ำและการซ้อมส่วนตัว
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+        <p class="text-xs text-slate-400">
+          *ข้อมูลจำลองเฉลี่ยอ้างอิงและพัฒนาบนพื้นฐานของงานทดลอง SURMOUNT-1 ร่วมกับการทำคู่ขนานไปกับการคุมแคลอรี่ต่ำและการออกกำลังกาย
+        </p>
+      </div>
+    </section>
+
+    <!-- ส่วนแสดงผลความก้าวหน้า ชาร์ต และคำแนะนำ (คอลัมน์ 8/12) -->
+    <section class="lg:col-span-8 flex flex-col gap-6">
+      
+      <!-- บอร์ดรายงานสรุปความก้าวหน้าแบบย่อ -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+        
+        <!-- ส่วนที่ 1: คาดการณ์น้ำหนัก -->
+        <div class="flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-slate-100 pb-4 sm:pb-0 sm:pr-4">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">น้ำหนักคาดการณ์เฉลี่ย</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="display-est-weight" class="text-3xl font-extrabold text-slate-900 transition-all duration-300">70.0</span>
+            <span class="text-sm font-semibold text-slate-500 uppercase unit-text">kg</span>
+          </div>
+          <p class="text-xs text-purple-600 mt-1 font-medium">
+            ณ สัปดาห์ที่ <span class="display-current-week">24</span> (ลดไป <span id="display-loss-percent">18.0</span>%)
+          </p>
+        </div>
+
+        <!-- ส่วนที่ 2: น้ำหนักที่ลดลงสะสม -->
+        <div class="flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-slate-100 pb-4 sm:pb-0 sm:pr-4">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">น้ำหนักที่สลายไปแล้ว</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="display-total-lost" class="text-3xl font-extrabold text-purple-600">-20.0</span>
+            <span class="text-sm font-semibold text-purple-600 uppercase unit-text">kg</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">
+            อิงจากน้ำหนักเริ่มเดิม <span id="display-start-weight">90</span> <span class="unit-text">kg</span>
+          </p>
+        </div>
+
+        <!-- ส่วนที่ 3: แถบเปอร์เซ็นต์สู่เป้าหมาย -->
+        <div class="flex flex-col justify-center">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">เปรียบเทียบกับเป้าหมาย</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="display-progress-to-target" class="text-3xl font-extrabold text-slate-800">100%</span>
+          </div>
+          <!-- แถบความคืบหน้า -->
+          <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+            <div id="progress-bar-inner" class="bg-gradient-to-r from-purple-400 to-indigo-600 h-2 rounded-full custom-transition" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- เครื่องมือไทม์ไลน์เหตุการณ์สำคัญ (Milestones) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6">
+        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
+          🎯 อัตราการลดน้ำหนักเฉลี่ยตามสัปดาห์ (Mounjaro® Average Weight Loss Milestones)
+        </h3>
+        
+        <div id="milestone-container" class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-6 text-center">
+          <!-- การ์ดแต่ละ Milestone จะเรืองแสงอัตโนมัติตามระยะเวลากล่องสแกนด้านล่าง -->
+          <div data-milestone="0" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 1-4</div>
+            <div class="text-lg font-black mt-0.5">-3%</div>
+          </div>
+          <div data-milestone="1" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 5-8</div>
+            <div class="text-lg font-black mt-0.5">-6%</div>
+          </div>
+          <div data-milestone="2" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 9-12</div>
+            <div class="text-lg font-black mt-0.5">-9%</div>
+          </div>
+          <div data-milestone="3" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 13-16</div>
+            <div class="text-lg font-black mt-0.5">-12%</div>
+          </div>
+          <div data-milestone="4" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 17-20</div>
+            <div class="text-lg font-black mt-0.5">-16%</div>
+          </div>
+          <div data-milestone="5" class="p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600">
+            <div class="text-[10px] font-bold opacity-80">สัปดาห์ 21+</div>
+            <div class="text-lg font-black mt-0.5">-22.5%</div>
+          </div>
+        </div>
+
+        <!-- เครื่องเล่นจำลองควบคุมเวลาแบบโต้ตอบ -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col md:flex-row items-center gap-4">
+          <button
+            id="play-pause-btn"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm transition self-stretch md:self-auto justify-center bg-purple-600 text-white hover:bg-purple-700"
+          >
+            <!-- เล่นจำลอง -->
+            <svg id="play-icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span id="play-btn-text">จำลองแนวโน้มสัปดาห์</span>
+          </button>
+
+          <div class="flex-1 w-full flex items-center gap-3">
+            <input 
+              type="range" 
+              id="week-slider"
+              min="0" 
+              max="72" 
+              value="24"
+              class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600 focus:outline-none"
+            />
+            <span class="text-sm font-extrabold text-purple-800 bg-purple-100/70 px-3 py-1.5 rounded-lg border border-purple-200 min-w-[105px] text-center">
+              สัปดาห์ที่ <span class="display-current-week">24</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- แผนภูมิพื้นที่ SVG แสดงงานทดลอง SURMOUNT-1 -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">
+              แผนภูมิกราฟเปรียบเทียบจากงานทดลองทางคลินิก (SURMOUNT-1 Trial)
+            </h3>
+            <p class="text-xs text-slate-500">
+              คลิกที่พื้นที่บนจุดกราฟโดยตรง หรือขยับแท่งสไลเดอร์เพื่อสำรวจแบบไดนามิก
+            </p>
+          </div>
+
+          <!-- ป้ายสัญญลักษณ์สีสายกราฟ -->
+          <div class="flex flex-wrap gap-x-4 gap-y-1.5">
+            <div class="flex items-center gap-1.5 text-xs font-medium">
+              <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+              <span class="text-slate-600">Placebo (-2.4%)</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs font-medium">
+              <span class="w-3 h-3 rounded bg-purple-400 inline-block"></span>
+              <span class="text-slate-600">Mounjaro 5mg (-15.0%)</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs font-medium">
+              <span class="w-3 h-3 rounded bg-purple-950 inline-block"></span>
+              <span class="text-slate-600">Mounjaro 15mg (-22.5%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- หน้าต่างวาดกราฟ SVG แบบ Responsive -->
+        <div class="relative h-[250px] w-full mt-4 select-none">
+          
+          <!-- เส้นกริดด้านหลัง -->
+          <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">0%</span><div class="flex-1 border-t border-slate-100"></div></div>
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">-5%</span><div class="flex-1 border-t border-slate-100"></div></div>
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">-10%</span><div class="flex-1 border-t border-slate-100"></div></div>
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">-15%</span><div class="flex-1 border-t border-slate-100"></div></div>
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">-20%</span><div class="flex-1 border-t border-slate-100"></div></div>
+            <div class="w-full flex items-center gap-2 h-0"><span class="text-[10px] text-slate-400 font-semibold w-8 text-right">-25%</span><div class="flex-1 border-t border-slate-100"></div></div>
+          </div>
+
+          <!-- SVG Canvas -->
+          <svg 
+            id="chart-svg"
+            class="absolute inset-0 w-full h-full pt-1.5 pb-2 pl-10 pr-4 cursor-pointer"
+            viewBox="0 0 100 100" 
+            preserveAspectRatio="none"
+          >
+            <!-- เส้นกราฟ Placebo (เหลือง) -->
+            <path id="path-placebo" fill="none" stroke="#F59E0B" stroke-width="1" stroke-opacity="0.4" class="custom-transition" d=""></path>
+
+            <!-- เส้นกราฟ Mounjaro 5mg (ม่วงอ่อน) -->
+            <path id="path-mounjaro5" fill="none" stroke="#C084FC" stroke-width="1" stroke-opacity="0.4" class="custom-transition" d=""></path>
+
+            <!-- เส้นกราฟ Mounjaro 15mg (ม่วงเข้ม) -->
+            <path id="path-mounjaro15" fill="none" stroke="#3B0764" stroke-width="2.2" stroke-opacity="1" class="custom-transition" d=""></path>
+
+            <!-- เส้นประเวลาระบุความก้าวหน้าปัจจุบัน -->
+            <line id="indicator-line" x1="33.3" y1="0" x2="33.3" y2="100" stroke="#8B5CF6" stroke-width="0.5" stroke-dasharray="1.5 1.5"></line>
+
+            <!-- วงกลมระบุตำแหน่งสัปดาห์ในปัจจุบัน -->
+            <circle id="indicator-circle" cx="33.3" cy="72" r="2.5" fill="#3B0764" stroke="#FFF" stroke-width="0.7"></circle>
+          </svg>
+
+          <!-- ตัวเลขระบุแกนแนวนอน (สัปดาห์) -->
+          <div class="absolute bottom-0 inset-x-0 pl-10 pr-4 flex justify-between pointer-events-none text-[10px] text-slate-400 font-bold">
+            <span>สัปดาห์ 0</span>
+            <span>สัปดาห์ 16</span>
+            <span>สัปดาห์ 32</span>
+            <span>สัปดาห์ 48</span>
+            <span>สัปดาห์ 64</span>
+            <span>สัปดาห์ 72</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- บอร์ดรายละเอียดความรู้ขนาดเข็มและคำแนะนำในการดูแลรักษา -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        
+        <!-- รูปแสดงปริมาณเข็มยา -->
+        <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-100 relative overflow-hidden">
+          <span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-400 mb-2">
+            โดสยาที่ควรได้รับช่วงนี้
+          </span>
+          <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center text-purple-800 mb-2 relative z-10">
+            <!-- ไอคอนเข็มยา SVG -->
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+          <span id="display-dose-value" class="text-2xl font-black text-slate-800 relative z-10">10.0 mg</span>
+          <span class="text-xs font-semibold text-purple-600 mt-1 relative z-10">ฉีดสัปดาห์ละ 1 ครั้ง</span>
+          <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-full filter blur-xl transform translate-x-8 -translate-y-8 opacity-70"></div>
+        </div>
+
+        <!-- รายละเอียดวิเคราะห์สัปดาห์ -->
+        <div class="md:col-span-8 space-y-3">
+          <h4 id="display-dose-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span>
+            ขนาดยาเพื่อความลื่นไหลต่อเนื่อง (สัปดาห์ที่ 13 - 16)
+          </h4>
+          <p id="display-dose-desc" class="text-sm text-slate-600 leading-relaxed">
+            เข้าสู่ระดับขนาดยาที่สูงเพื่อช่วยสลายไขมันสะสมในชั้นลึก ตัวยาควบคุมอาการหิวโหยส่วนเกินและควบคุมสารคัดหลั่งความอยากอาหารในระบบประสาทได้อย่างมีประสิทธิภาพสูงสุด
+          </p>
+          
+          <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-100/50 flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-purple-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <div class="text-xs text-slate-700 leading-relaxed">
+              <strong class="font-bold text-purple-800">กลไกพิเศษ GIP & GLP-1: </strong>
+              Mounjaro® ทำงานโดยเลียนแบบฮอร์โมนอิ่มตามธรรมชาติของร่างกายถึง 2 ชนิด ส่งผลในการสลายเซลล์ไขมันสะสมในช่องท้องได้รวดเร็วกว่ายาฉีดแบบเดี่ยวในกลุ่มก่อนหน้า
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- กล่องข้อความและเงื่อนไขทางการแพทย์ของ Asda Doctor -->
+      <div class="bg-amber-50 rounded-2xl border border-amber-200 p-5 md:p-6 space-y-4">
+        <h4 class="text-base font-bold text-amber-900 flex items-center gap-2">
+          <!-- ไอคอน Warning SVG -->
+          <svg class="w-5 h-5 text-amber-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          ข้อควรทราบเชิงลึกเกี่ยวกับขนาดยาและการควบคุมไลฟ์สไตล์
+        </h4>
+        <div class="text-xs text-amber-800 space-y-2.5 leading-relaxed">
+          <p>
+            <strong>⚠️ การปรับเพิ่มขนาดยา (Dosage Step-up):</strong> สถิติประสิทธิภาพการลดน้ำหนักเฉลี่ยสูงสุดที่ 21% - 22.5% ในระยะยาวอ้างอิงและคำนวณจากกลุ่มศึกษาที่ผู้ป่วย<strong>ค่อยๆ ได้รับการไต่ระดับปรับขนาดยาอย่างสม่ำเสมอขึ้นไปจนถึงขนาดยาสูงสุด 15mg</strong>
+          </p>
+          <p>
+            หากคุณมีผลข้างเคียงและแพทย์พิจารณาให้คุณคงขนาดยาระดับปานกลางเอาไว้ (เช่น 5mg หรือ 10mg) อัตราความเร็วอาจต่างออกไปบ้าง แต่งานวิจัยยืนยันชัดเจนว่า<strong>ผู้ป่วยยังคงมีสิทธิ์ลดน้ำหนักตัวลงได้มากกว่า 15% หรือมากกว่านั้นได้เช่นเดียวกัน</strong>
+          </p>
+          <p>
+            <strong>🏋️‍♂️ การออกกำลังกายและควบคุมอาหาร (Crucial Lifestyle):</strong> เพื่อผลลัพธ์ที่ดีและยั่งยืนที่สุดหลังจากหยุดโปรแกรมยา ทางทีมแพทย์แนะนำเป็นอย่างยิ่งให้ร่วมฝึกวินัยด้านการทานอาหารพลังงานต่ำ และทำกิจกรรมการฝึกความแข็งแรงของกล้ามเนื้ออย่างต่อเนื่องสม่ำเสมอ
+          </p>
+        </div>
+      </div>
+
+      <!-- บอร์ดไลฟ์สไตล์ เน้น "Weight Training" ของยาตระกูล Tirzepatide -->
+      <div class="bg-slate-900 text-white rounded-2xl shadow-md p-6 grid grid-cols-1 md:grid-cols-2 gap-6 border border-slate-800">
+        <div>
+          <h4 class="text-md font-bold text-purple-400 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            ทำไมต้องเน้น Weight Training ร่วมกับ Mounjaro®?
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
+            เมื่อน้ำหนักตัวของคุณลดลงอย่างรวดเร็วเป็นพิเศษด้วยพลังของ Tirzepatide ร่างกายอาจสลายโปรตีนในมวลกล้ามเนื้อมาใช้เป็นพลังงาน การเล่นเวทเทรนนิ่งจึงเป็นสิ่งสำคัญที่สุด:
+          </p>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="text-purple-400 font-bold">•</span>
+              <span><strong>รักษาระบบเผาผลาญ (Metabolism Protection):</strong> การรักษาเซลล์และเส้นใยกล้ามเนื้อเอาไว้จะช่วยป้องกันสภาวะโยโย่หลังจากสิ้นสุดโปรแกรมยาได้สมบูรณ์แบบ</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-purple-400 font-bold">•</span>
+              <span><strong>รูปทรงสมส่วน ไม่ย้วยพับ (Tone & Shape):</strong> ช่วยกระชับพื้นที่ใต้ชั้นผิวหนังไม่ให้เหี่ยวหย่อนพับเมื่อไขมันสลายไปอย่างรวดเร็ว</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-purple-400 font-bold">•</span>
+              <span><strong>เพิ่มความแกร่งโครงสร้างกระดูก:</strong> กระตุ้นแรงต้านต่อข้อต่อ ช่วยพยุงการรับน้ำหนักตัวและส่งเสริมบุคลิกภาพ</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-md font-bold text-purple-400 mb-3 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            คำแนะนำและตารางซ้อมที่เหมาะสม
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            เน้นการเวทเทรนนิ่งอย่างน้อย 3 วันต่อสัปดาห์ (วันเว้นวัน) เน้นกล้ามเนื้อมัดใหญ่เพื่อให้ร่างกายตึงกระชับอย่างรวดเร็ว:
+          </p>
+          
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
+              <span class="block font-bold text-purple-400 mb-0.5">🏋️‍♂️ ท่าซ้อมหลักเน้นกล้ามเนื้อมัดใหญ่ (Compound Movements)</span>
+              <span class="block text-slate-300">
+                เล่นท่าสควอช (Squats), ดันอก/ดันพื้น (Bench Press/Push-ups), และดึงข้อ/พายเรือดึงดัมเบล (Rows) ท่าละ 3 เซ็ต เซ็ตละ 10-12 ครั้ง
+              </span>
+            </div>
+            <div class="p-3 bg-slate-800 rounded-xl border border-slate-700">
+              <span class="block font-bold text-purple-400 mb-0.5">🔄 ค่อยๆ เพิ่มแรงต้านทีละนิด (Progressive Overload)</span>
+              <span class="block text-slate-300">
+                เมื่อร่างกายปรับตัวแข็งแรงขึ้น ให้ค่อยๆ เพิ่มน้ำหนักของดัมเบลหรือยางยืดแรงต้าน เพื่อรักษาอัตราการเสริมสร้างใยกล้ามเนื้ออย่างต่อเนื่อง
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ส่วนแสดงสิทธิ์ท้ายเพจ -->
+  <footer class="bg-slate-100 border-t border-slate-200 mt-10">
+    <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <p>© 2026 ASDA Weight Loss Companion Interactive Tool for Mounjaro. พัฒนาขึ้นโดยอ้างอิงข้อมูลทางสถิติและคลินิกการลดน้ำหนัก</p>
+      <div class="flex gap-4">
+        <a href="https://onlinedoctor.asda.com/uk/mounjaro-weight-loss-week-by-week.html" target="_blank" rel="noreferrer" class="hover:text-purple-600 underline">
+          ดูต้นฉบับข้อมูล Asda Mounjaro
+        </a>
+        <span>•</span>
+        <span class="text-slate-400 font-medium">ตัวคำนวณจำลองนี้ไม่สามารถทดแทนการวินิจฉัยโรคและคำแนะนำของแพทย์ได้</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ส่วนตรรกะประมวลผลการทำงาน (Javascript) -->
+  <script>
+    // 1. ข้อมูลวิจัยทางคลินิก (SURMOUNT-1 Study)
+    const placeboData = [
+      { w: 0, p: 0 }, { w: 4, p: -0.8 }, { w: 8, p: -1.5 }, { w: 12, p: -2.0 },
+      { w: 16, p: -2.3 }, { w: 20, p: -2.8 }, { w: 24, p: -3.3 }, { w: 32, p: -3.8 },
+      { w: 40, p: -4.0 }, { w: 48, p: -4.0 }, { w: 56, p: -4.0 }, { w: 64, p: -3.9 }, { w: 72, p: -2.4 }
+    ];
+
+    const mounjaro5mgData = [
+      { w: 0, p: 0 }, { w: 4, p: -2.5 }, { w: 8, p: -5.0 }, { w: 12, p: -7.0 },
+      { w: 16, p: -9.0 }, { w: 20, p: -11.0 }, { w: 24, p: -12.5 }, { w: 32, p: -13.5 },
+      { w: 40, p: -14.2 }, { w: 48, p: -14.6 }, { w: 56, p: -14.8 }, { w: 64, p: -14.9 }, { w: 72, p: -15.0 }
+    ];
+
+    const mounjaro15mgData = [
+      { w: 0, p: 0 }, { w: 4, p: -3.0 }, { w: 8, p: -6.0 }, { w: 12, p: -9.0 },
+      { w: 16, p: -12.0 }, { w: 20, p: -16.0 }, { w: 24, p: -18.0 }, { w: 32, p: -19.5 },
+      { w: 40, p: -20.5 }, { w: 48, p: -21.2 }, { w: 56, p: -21.8 }, { w: 64, p: -22.2 }, { w: 72, p: -22.5 }
+    ];
+
+    // 2. ตัวแปรสถานะแอปพลิเคชัน (State)
+    const state = {
+      unit: 'kg',
+      startWeight: 90,
+      targetWeight: 70,
+      currentWeek: 24,
+      activePlan: 'mounjaro15',
+      isPlaying: false,
+      animationInterval: null
+    };
+
+    // 3. ฟังก์ชันคำนวณและแปลความหมาย
+    function getInterpolatedValue(week, dataset) {
+      if (week <= 0) return 0;
+      if (week >= 72) return dataset[dataset.length - 1].p;
+      
+      for (let i = 0; i < dataset.length - 1; i++) {
+        const p1 = dataset[i];
+        const p2 = dataset[i + 1];
+        if (week >= p1.w && week <= p2.w) {
+          const ratio = (week - p1.w) / (p2.w - p1.w);
+          return p1.p + ratio * (p2.p - p1.p);
+        }
+      }
+      return 0;
+    }
+
+    function getDoseInfo(week) {
+      if (week <= 4) {
+        return {
+          dose: "2.5 mg",
+          title: "ขนาดยาเริ่มต้นปรับสภาพร่างกาย (สัปดาห์ที่ 1 - 4)",
+          desc: "เป็นโดสเริ่มต้นเพื่อช่วยให้ร่างกาย ค่อยๆ ปรับตัวเข้ากับฮอร์โมนเลียนแบบ Tirzepatide (GIP & GLP-1) เพื่อลดโอกาสเกิดอาการข้างเคียงเกี่ยวกับกระเพาะและระบบย่อยอาหาร",
+          tips: "หลีกเลี่ยงการทานอาหารในปริมาณมากเกินไป หลีกเลี่ยงของทอดและไขมันสูงเพื่อหลีกเลี่ยงอาการคลื่นไส้"
+        };
+      } else if (week <= 8) {
+        return {
+          dose: "5.0 mg",
+          title: "ปรับสเต็ปที่สองเพื่อประสิทธิผลที่เพิ่มขึ้น (สัปดาห์ที่ 5 - 8)",
+          desc: "หลังจากพ้นเดือนแรก ร่างกายจะเริ่มเคยชินแล้ว แพทย์จะปรับขนาดเพิ่มขึ้นเป็น 5mg ซึ่งเป็นระดับที่เริ่มส่งผลในการลดพฤติกรรมความหิวและอิ่มเร็วอย่างมีนัยสำคัญ",
+          tips: "เน้นการเริ่มเพิ่มสัดส่วนโปรตีนในแต่ละมื้ออาหาร และเริ่มคุมแคลอรี่ควบคู่"
+        };
+      } else if (week <= 12) {
+        return {
+          dose: "7.5 mg",
+          title: "ขยายอัตราการเผาผลาญและการดึงไขมัน (สัปดาห์ที่ 9 - 12)",
+          desc: "ขนาดกึ่งกลางสำคัญที่ช่วยเพิ่มระดับประสิทธิภาพการควบคุมอินซูลินและการทำงานของฮอร์โมนอิ่ม ส่งผลให้น้ำหนักตัวเริ่มลดลงอย่างเห็นได้ชัดและเสถียรขึ้น",
+          tips: "จัดโปรแกรม Weight Training สัปดาห์ละ 3 วันเพื่อกระตุ้นและรักษามวลกล้ามเนื้อไม่ให้สูญหายตามน้ำหนัก"
+        };
+      } else if (week <= 16) {
+        return {
+          dose: "10.0 mg",
+          title: "ขนาดยาเพื่อความลื่นไหลต่อเนื่อง (สัปดาห์ที่ 13 - 16)",
+          desc: "เข้าสู่ระดับขนาดยาที่สูงเพื่อช่วยสลายไขมันสะสมในชั้นลึก ตัวยาควบคุมอาการหิวโหยส่วนเกินและควบคุมสารคัดหลั่งความอยากอาหารในระบบประสาทได้อย่างมีประสิทธิภาพสูงสุด",
+          tips: "ระมัดระวังการดื่มน้ำให้เพียงพอ (2-3 ลิตรต่อวัน) เพื่อลดปัญหาท้องผูกที่อาจเกิดขึ้นได้เป็นบางคราว"
+        };
+      } else if (week <= 20) {
+        return {
+          dose: "12.5 mg",
+          title: "ก้าวสู่โค้งสุดท้ายในการสลายไขมันสูงสุด (สัปดาห์ที่ 17 - 20)",
+          desc: "ขนาดระดับเกือบสูงสุดที่แพทย์เฉพาะทางจะพิจารณาให้ในผู้ป่วยที่ต้องการผลลัพธ์เป็นพิเศษและไม่มีปัญหากับผลข้างเคียงของยา",
+          tips: "เน้นการเล่นบอดี้เวทหรือใช้อุปกรณ์ต้านแรง (Resistance band) เพื่อรักษากล้ามเนื้อแกนกลางลำตัว"
+        };
+      } else {
+        return {
+          dose: "15.0 mg",
+          title: "ยาระดับสูงสุดเพื่อผลการลดน้ำหนัก 22.5% (สัปดาห์ที่ 21+ ขึ้นไป)",
+          desc: "ปริมาณยามาตรฐานสูงสุดจากการทดสอบ SURMOUNT-1 ที่ช่วยผลักดันอัตราการลดของไขมันส่วนเกินสะสมต่อเนื่องไปได้ยาวนานจนถึงสัปดาห์ที่ 72 ช่วยลดน้ำหนักตัวเฉลี่ยสูงสุดได้ถึง 22.5%",
+          tips: "หากคุณใช้ปริมาณยาในระดับที่ต่ำกว่า (เช่น คงที่ 5mg ตลอด) แม้อัตราอาจต่ำกว่าบ้าง แต่ยังคงลดได้เฉลี่ยถึง 15% ร่วมกับการคุมไลฟ์สไตล์ที่ดี"
+        };
+      }
+    }
+
+    // 4. ฟังก์ชันการอัปเดตส่วนติดต่อผู้ใช้งาน (UI Rendering)
+    function updateUI() {
+      // ดึงระดับเปอร์เซ็นต์ตามแผนยาที่เลือกในสัปดาห์ปัจจุบัน
+      let dataset = wegovyPlanDataset();
+      const placeboLossPercent = getInterpolatedValue(state.currentWeek, placeboData);
+      const activeLossPercent = getInterpolatedValue(state.currentWeek, dataset);
+
+      // คำนวณน้ำหนักสะสมที่จะต้องลด
+      const currentEstWeight = Math.max(0, state.startWeight * (1 + activeLossPercent / 100));
+      const totalWeightLost = state.startWeight - currentEstWeight;
+      
+      // อัตราการเข้าสู่เป้าหมายหุ่นฝัน (%)
+      let progressToTarget = 100;
+      if (state.startWeight > state.targetWeight) {
+        progressToTarget = Math.min(100, Math.max(0, (totalWeightLost / (state.startWeight - state.targetWeight)) * 100));
+      }
+
+      // แสดงน้ำหนักและอัตราล้มเหลว/สำเร็จเรียลไทม์
+      document.getElementById('display-est-weight').textContent = currentEstWeight.toFixed(1);
+      document.getElementById('display-loss-percent').textContent = Math.abs(activeLossPercent).toFixed(1);
+      document.getElementById('display-total-lost').textContent = `-${totalWeightLost.toFixed(1)}`;
+      document.getElementById('display-start-weight').textContent = state.startWeight;
+      document.getElementById('display-progress-to-target').textContent = `${progressToTarget.toFixed(0)}%`;
+      document.getElementById('progress-bar-inner').style.width = `${progressToTarget}%`;
+
+      // อัปเดตสัญลักษณะหน่วยทั่วแอป
+      document.querySelectorAll('.unit-text').forEach(el => el.textContent = state.unit);
+
+      // คำนวณน้ำหนักเสริม (กิโลกรัม / ปอนด์ / สโตน)
+      document.getElementById('start-weight-sub').textContent = getSubDisplayValue(state.startWeight);
+      document.getElementById('target-weight-sub').textContent = getSubDisplayValue(state.targetWeight);
+
+      // คำนวณความฝันลดกี่เปอร์เซ็นต์
+      const targetReductionPercent = state.startWeight > 0 ? ((state.startWeight - state.targetWeight) / state.startWeight) * 100 : 0;
+      document.getElementById('target-reduction-percent').textContent = targetReductionPercent > 0 ? `-${targetReductionPercent.toFixed(1)}%` : '0%';
+      
+      const descEl = document.getElementById('target-reduction-desc');
+      if (targetReductionPercent > 0) {
+        if (targetReductionPercent <= 22.5) {
+          descEl.textContent = "✓ สอดคล้องและมีโอกาสเป็นไปได้สูงตามเกณฑ์เฉลี่ยผลลัพธ์ของกลุ่มทดสอบสูงสุด 15mg (-22.5%)";
+          descEl.className = "text-[10px] text-slate-500 mt-1 leading-normal";
+        } else {
+          descEl.textContent = "⚠ ค่อนข้างสูงกว่าค่าเฉลี่ยสถิติการทดลองสูงสุด (-22.5%) แนะนำให้ปรึกษาแพทย์และเวทเทรนนิ่งอย่างมีวินัย";
+          descEl.className = "text-[10px] text-amber-600 font-semibold mt-1 leading-normal";
+        }
+      } else {
+        descEl.textContent = "ป้อนเป้าหมายเพื่อตรวจประเมินอัตราความก้าวหน้า";
+      }
+
+      // อัปเดตระดับ Milestone ที่ติดไฟ/ส่องแสงสว่าง
+      const milestoneIndex = getActiveMilestoneIndex();
+      document.querySelectorAll('#milestone-container > div').forEach((card, idx) => {
+        if (idx === milestoneIndex) {
+          card.className = "p-2.5 rounded-xl border transition-all duration-300 bg-purple-600 text-white border-purple-600 shadow-sm scale-105";
+        } else {
+          card.className = "p-2.5 rounded-xl border transition-all duration-300 bg-slate-50 border-slate-200 text-slate-600";
+        }
+      });
+
+      // ข้อมูลโดสเข็มยาและการแนะนำ
+      const doseDetails = getDoseInfo(state.currentWeek);
+      document.getElementById('display-dose-value').textContent = doseDetails.dose;
+      document.getElementById('display-dose-title').textContent = doseDetails.title;
+      document.getElementById('display-dose-desc').textContent = doseDetails.desc;
+
+      // จัดการตัวชี้สไลเดอร์และสัปดาห์
+      document.querySelectorAll('.display-current-week').forEach(el => el.textContent = state.currentWeek);
+      document.getElementById('week-slider').value = state.currentWeek;
+
+      // ปรับปรุงเส้น SVG กราฟ
+      drawSvgLines();
+    }
+
+    function wegovyPlanDataset() {
+      if (state.activePlan === 'placebo') return placeboData;
+      if (state.activePlan === 'mounjaro5') return mounjaro5mgData;
+      return mounjaro15mgData;
+    }
+
+    function getActiveMilestoneIndex() {
+      if (state.currentWeek <= 4) return 0;
+      if (state.currentWeek <= 8) return 1;
+      if (state.currentWeek <= 12) return 2;
+      if (state.currentWeek <= 16) return 3;
+      if (state.currentWeek <= 20) return 4;
+      return 5;
+    }
+
+    function getSubDisplayValue(weightValue) {
+      if (state.unit === 'st') {
+        const kg = convertWeight(weightValue, 'st', 'kg');
+        const lbs = convertWeight(weightValue, 'st', 'lbs');
+        return `~ ${kg} kg / ${lbs} lbs`;
+      } else if (state.unit === 'lbs') {
+        const st = convertWeight(weightValue, 'lbs', 'st');
+        const kg = convertWeight(weightValue, 'lbs', 'kg');
+        return `~ ${st} st / ${kg} kg`;
+      } else {
+        const st = convertWeight(weightValue, 'kg', 'st');
+        const lbs = convertWeight(weightValue, 'kg', 'lbs');
+        return `~ ${st} st / ${lbs} lbs`;
+      }
+    }
+
+    // 5. จัดการวาดกราฟเส้นบน SVG และการสแตนบายระบุตำแหน่งเส้นขีดเวลา
+    function generateSvgPath(dataset) {
+      return dataset.map((pt, index) => {
+        const x = (pt.w / 72) * 100;
+        const y = (Math.abs(pt.p) / 25) * 100;
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+      }).join(' ');
+    }
+
+    function drawSvgLines() {
+      document.getElementById('path-placebo').setAttribute('d', generateSvgPath(placeboData));
+      document.getElementById('path-mounjaro5').setAttribute('d', generateSvgPath(mounjaro5mgData));
+      document.getElementById('path-mounjaro15').setAttribute('d', generateSvgPath(mounjaro15mgData));
+
+      // จัดสไตล์ความหนา/ความทึบแสงของเส้นหลักตามแผนที่เปิด
+      const isP = state.activePlan === 'placebo';
+      const isM5 = state.activePlan === 'mounjaro5';
+      const isM15 = state.activePlan === 'mounjaro15';
+
+      document.getElementById('path-placebo').setAttribute('stroke-width', isP ? '2.2' : '1');
+      document.getElementById('path-placebo').setAttribute('stroke-opacity', isP ? '1' : '0.4');
+
+      document.getElementById('path-mounjaro5').setAttribute('stroke-width', isM5 ? '2.2' : '1');
+      document.getElementById('path-mounjaro5').setAttribute('stroke-opacity', isM5 ? '1' : '0.4');
+
+      document.getElementById('path-mounjaro15').setAttribute('stroke-width', isM15 ? '2.2' : '1');
+      document.getElementById('path-mounjaro15').setAttribute('stroke-opacity', isM15 ? '1' : '0.4');
+
+      // กำหนดตำแหน่ง Indicator เส้นประและวงกลม
+      const activePercent = getInterpolatedValue(state.currentWeek, wegovyPlanDataset());
+      const circleX = (state.currentWeek / 72) * 100;
+      const circleY = (Math.abs(activePercent) / 25) * 100;
+
+      const line = document.getElementById('indicator-line');
+      line.setAttribute('x1', circleX);
+      line.setAttribute('x2', circleX);
+
+      const circle = document.getElementById('indicator-circle');
+      circle.setAttribute('cx', circleX);
+      circle.setAttribute('cy', circleY);
+
+      const circleColor = isP ? '#F59E0B' : isM5 ? '#C084FC' : '#3B0764';
+      circle.setAttribute('fill', circleColor);
+    }
+
+    // 6. การจัดการและผูกมัดเหตุการณ์ (Event Listeners)
+    
+    // ตั้งค่าเริ่มต้นและกรองความถูกต้องกล่องอินพุตน้ำหนัก
+    const startInput = document.getElementById('start-weight-input');
+    const targetInput = document.getElementById('target-weight-input');
+
+    startInput.addEventListener('input', (e) => {
+      state.startWeight = Math.max(0, parseFloat(e.target.value) || 0);
+      updateUI();
+    });
+
+    targetInput.addEventListener('input', (e) => {
+      state.targetWeight = Math.max(0, parseFloat(e.target.value) || 0);
+      updateUI();
+    });
+
+    // ปุ่มแนะนำสัดส่วนเป้าหมาย -22.5%
+    document.getElementById('recommend-target-btn').addEventListener('click', () => {
+      const recommended = parseFloat((state.startWeight * 0.775).toFixed(1));
+      state.targetWeight = recommended;
+      targetInput.value = recommended;
+      updateUI();
+    });
+
+    // คลาสปุ่มสลับหน่วยน้ำหนัก
+    function setupUnitBtn(btnId, targetUnit) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        if (state.unit === targetUnit) return;
+        
+        // แปลงค่าดั้งเดิมในช่อง Input
+        const convertedStart = convertWeight(state.startWeight, state.unit, targetUnit);
+        const convertedTarget = convertWeight(state.targetWeight, state.unit, targetUnit);
+        
+        state.startWeight = convertedStart;
+        state.targetWeight = convertedTarget;
+        state.unit = targetUnit;
+
+        startInput.value = convertedStart;
+        targetInput.value = convertedTarget;
+
+        // ไฮไลท์ปุ่มหน่วยที่ถูกเลือก
+        document.querySelectorAll('[id^="unit-"]').forEach(btn => {
+          btn.className = "flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition uppercase text-slate-300 hover:bg-slate-800/50";
+        });
+        document.getElementById(btnId).className = "flex-1 md:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition uppercase bg-purple-600 text-white shadow-sm";
+
+        updateUI();
+      });
+    }
+    setupUnitBtn('unit-kg-btn', 'kg');
+    setupUnitBtn('unit-lbs-btn', 'lbs');
+    setupUnitBtn('unit-st-btn', 'st');
+
+    // คลาสปุ่มเลือกแผนยาจำลอง
+    function setupPlanBtn(btnId, targetPlan) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        state.activePlan = targetPlan;
+
+        // สลับไฮไลท์ปุ่มแผนยา
+        document.querySelectorAll('[id^="plan-"]').forEach(btn => {
+          btn.className = "w-full text-left p-3.5 rounded-xl border transition bg-white text-slate-700 hover:bg-slate-50 border-slate-200";
+        });
+
+        const activeBtn = document.getElementById(btnId);
+        if (targetPlan === 'mounjaro15') {
+          activeBtn.className = "w-full text-left p-3.5 rounded-xl border transition bg-purple-950 text-white border-purple-800 shadow-md";
+        } else if (targetPlan === 'mounjaro5') {
+          activeBtn.className = "w-full text-left p-3.5 rounded-xl border transition bg-purple-50 text-purple-900 border-purple-300 shadow-sm";
+        } else {
+          activeBtn.className = "w-full text-left p-3.5 rounded-xl border transition bg-amber-50 text-amber-900 border-amber-400";
+        }
+
+        updateUI();
+      });
+    }
+    setupPlanBtn('plan-mounjaro15-btn', 'mounjaro15');
+    setupPlanBtn('plan-mounjaro5-btn', 'mounjaro5');
+    setupPlanBtn('plan-placebo-btn', 'placebo');
+
+    // ตัวสไลเดอร์สัปดาห์
+    const slider = document.getElementById('week-slider');
+    slider.addEventListener('input', (e) => {
+      state.currentWeek = parseInt(e.target.value);
+      stopSimulation();
+      updateUI();
+    });
+
+    // ปุ่มจำลองจำลองความคืบหน้าของเวลา (Play / Pause)
+    const playBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const playBtnText = document.getElementById('play-btn-text');
+
+    playBtn.addEventListener('click', () => {
+      if (state.isPlaying) {
+        stopSimulation();
+      } else {
+        startSimulation();
+      }
+    });
+
+    function startSimulation() {
+      state.isPlaying = true;
+      playBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm transition self-stretch md:self-auto justify-center bg-rose-500 text-white hover:bg-rose-600";
+      playBtnText.textContent = "หยุดจำลองเวลา";
+      
+      // ไอคอน Pause SVG แทนที่ Play
+      playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />';
+
+      // หากจำลองสัปดาห์ถึงจุดสูงสุด 72 สัปดาห์ ให้เริ่มนับหนึ่งใหม่
+      if (state.currentWeek >= 72) {
+        state.currentWeek = 0;
+      }
+
+      state.animationInterval = setInterval(() => {
+        state.currentWeek += 1;
+        if (state.currentWeek >= 72) {
+          state.currentWeek = 72;
+          stopSimulation();
+        }
+        updateUI();
+      }, 150);
+    }
+
+    function stopSimulation() {
+      state.isPlaying = false;
+      playBtn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm transition self-stretch md:self-auto justify-center bg-purple-600 text-white hover:bg-purple-700";
+      playBtnText.textContent = "จำลองแนวโน้มสัปดาห์";
+      
+      // ไอคอน Play SVG ดั้งเดิม
+      playIcon.innerHTML = '<path d="M8 5v14l11-7z" />';
+
+      if (state.animationInterval) {
+        clearInterval(state.animationInterval);
+      }
+    }
+
+    // ฟังก์ชันจับพิกัดการคลิกบนหน้าจอแผนภูมิ SVG เพื่อสลับสัปดาห์โดยตรง
+    const chartSvg = document.getElementById('chart-svg');
+    chartSvg.addEventListener('click', (e) => {
+      const rect = chartSvg.getBoundingClientRect();
+      const paddingLeft = 40; // อ้างอิง pl-10 (40px)
+      const paddingRight = 16; // อ้างอิง pr-4 (16px)
+      
+      const clickX = e.clientX - rect.left - paddingLeft;
+      const activeWidth = rect.width - paddingLeft - paddingRight;
+      const relativeX = Math.max(0, Math.min(1, clickX / activeWidth));
+      
+      state.currentWeek = Math.round(relativeX * 72);
+      stopSimulation();
+      updateUI();
+    });
+
+    // รันโปรแกรมเริ่มต้นและระบายภาพทันทีที่เข้าเว็บ
+    updateUI();
+  </script>
+</body>
+</html>
