@@ -694,6 +694,21 @@
       return 5;
     }
 
+    function convertWeight(value, fromUnit, toUnit) {
+      if (fromUnit === toUnit) return value;
+      
+      // Convert to kg first
+      let kg;
+      if (fromUnit === 'kg') kg = value;
+      else if (fromUnit === 'lbs') kg = value / 2.20462;
+      else if (fromUnit === 'st') kg = value / 0.157473;
+      
+      // Convert from kg to target unit
+      if (toUnit === 'kg') return parseFloat(kg.toFixed(1));
+      if (toUnit === 'lbs') return parseFloat((kg * 2.20462).toFixed(1));
+      if (toUnit === 'st') return parseFloat((kg * 0.157473).toFixed(1));
+    }
+
     function getSubDisplayValue(weightValue) {
       if (state.unit === 'st') {
         const kg = convertWeight(weightValue, 'st', 'kg');
